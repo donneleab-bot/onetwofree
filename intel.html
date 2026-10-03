@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCKY BRUSH — Art Market & Casino Bar</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --gold: #ffd700;
+    --gold-dark: #b8860b;
+    --red: #c8102e;
+    --red-dark: #7a0a1c;
+    --green: #0a5c36;
+    --dark: #0d0d0d;
+    --dark-2: #1a1a1a;
+    --neon-pink: #ff2d95;
+    --neon-cyan: #00f0ff;
+    --cream: #f5e6c8;
+  }
+
+  html, body {
+    background: #000;
+    color: var(--cream);
+    font-family: 'Playfair Display', serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  /* ===== BACKGROUND CASINO FLOOR ===== */
+  .bg-floor {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(255,45,149,0.15), transparent 50%),
+      radial-gradient(ellipse at 80% 100%, rgba(0,240,255,0.12), transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(255,215,0,0.08), transparent 70%),
+      linear-gradient(180deg, #0a0505 0%, #150a0a 40%, #0a0505 100%);
+    overflow: hidden;
+  }
+
+  /* carpet pattern */
+  .bg-floor::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(200,16,46,0.08) 0 2px, transparent 2px 40px),
+      repeating-linear-gradient(-45deg, rgba(255,215,0,0.05) 0 2px, transparent 2px 40px),
+      radial-gradient(circle at 10px 10px, rgba(255,215,0,0.15) 1px, transparent 1.5px);
+    background-size: 80px 80px, 80px 80px, 20px 20px;
+    opacity: 0.6;
+  }
+
+  /* slot machine columns */
+  .slots-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 20px 30px;
+    opacity: 0.85;
+  }
+
+  .slot-machine {
+    position: relative;
+    width: 130px;
+    height: 260px;
+    flex-shrink: 0;
+    animation: slotFloat 4s ease-in-out infinite;
+  }
+  .slot-machine:nth-child(odd) { animation-delay: -2s; }
+  .slot-machine:nth-child(3n) { transform: scale(0.85); opacity: 0.7; }
+  .slot-machine:nth-child(2n) { transform: scale(0.7); opacity: 0.55; }
+
+  @keyframes slotFloat {
+    0%,100% { translate: 0 0; }
+    50% { translate: 0 -8px; }
+  }
+
+  .slot-body {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, #2a0a0a, #150505);
+    border: 3px solid var(--gold-dark);
+    border-radius: 12px 12px 6px 6px;
+    box-shadow:
+      inset 0 0 30px rgba(255,45,149,0.3),
+      0 0 25px rgba(255,45,149,0.4),
+      0 0 40px rgba(255,215,0,0.2);
+  }
+
+  .slot-top-light {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 14px;
+    background: linear-gradient(180deg, var(--neon-pink), var(--red-dark));
+    border-radius: 20px 20px 4px 4px;
+    box-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .slot-screen {
+    position: absolute;
+    top: 30px;
+    left: 12%;
+    width: 76%;
+    height: 90px;
+    background: #000;
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    display: flex;
+    gap: 4px;
+    padding: 6px;
+    overflow: hidden;
+    box-shadow: inset 0 0 15px rgba(255,215,0,0.4);
+  }
+
+  .reel {
+    flex: 1;
+    background: linear-gradient(180deg, #fff8dc, #f0d98a);
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+  }
+  .reel::before {
+    content: '★';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--red);
+    font-size: 26px;
+    animation: spin 0.6s steps(4) infinite;
+  }
+  .reel:nth-child(2)::before { content: '7'; animation-delay: 0.1s; color: #000; }
+  .reel:nth-child(3)::before { content: '◆'; animation-delay: 0.2s; color: var(--green); }
+  @keyframes spin {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  .slot-lever {
+    position: absolute;
+    right: -22px;
+    top: 60px;
+    width: 10px;
+    height: 70px;
+    background: linear-gradient(180deg, #888, #333);
+    border-radius: 5px;
+  }
+  .slot-lever::before {
+    content: '';
+    position: absolute;
+    top: -18px;
+    left: -4px;
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 30% 30%, #ff6b6b, var(--red));
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--red);
+  }
+
+  .slot-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(180deg, var(--red-dark), #3a0510);
+    border-top: 2px solid var(--gold-dark);
+    border-radius: 0 0 6px 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--gold);
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  /* floating chips */
+  .chip {
+    position: fixed;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.55;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.2);
+    animation: chipFloat linear infinite;
+  }
+  .chip::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 2px dashed rgba(255,255,255,0.5);
+  }
+  .chip.red { background: radial-gradient(circle at 35% 35%, #ff4d6d, var(--red-dark)); }
+  .chip.blue { background: radial-gradient(circle at 35% 35%, #4d9fff, #0a3d7a); }
+  .chip.gold { background: radial-gradient(circle at 35% 35%, #ffe97a, var(--gold-dark)); }
+  .chip.black { background: radial-gradient(circle at 35% 35%, #555, #000); }
+
+  @keyframes chipFloat {
+    0% { transform: translateY(110vh) rotate(0deg); }
+    100% { transform: translateY(-10vh) rotate(720deg); }
+  }
+
+  /* neon dice */
+  .dice {
+    position: fixed;
+    z-index: 2;
+    font-size: 42px;
+    pointer-events: none;
+    opacity: 0.35;
+    animation: diceFloat linear infinite;
+    filter: drop-shadow(0 0 12px var(--neon-pink));
+  }
+  @keyframes diceFloat {
+    0% { transform: translateY(110vh) rotate(0deg); }
+    100% { transform: translateY(-10vh) rotate(360deg); }
+  }
+
+  /* ===== CONTENT ===== */
+  .container {
+    position: relative;
+    z-index: 10;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(14px);
+    background: rgba(10,5,5,0.75);
+    border-bottom: 2px solid var(--gold-dark);
+    box-shadow: 0 4px 30px rgba(255,45,149,0.25);
+  }
+  .nav-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+  }
+  .logo {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: 28px;
+    background: linear-gradient(180deg, #fff3b0, var(--gold), var(--gold-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 30px rgba(255,215,0,0.5);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo .dice-icon { font-size: 26px; filter: drop-shadow(0 0 8px var(--gold)); }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--cream);
+    text-decoration: none;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--neon-pink);
+    box-shadow: 0 0 10px var(--neon-pink);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-links a:hover::after { width: 100%; }
+
+  .nav-cta {
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: #fff;
+    border: 2px solid var(--gold);
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 17px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(200,16,46,0.6);
+  }
+  .nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 35px rgba(255,45,149,0.9);
+  }
+
+  /* HERO */
+  .hero {
+    padding: 100px 0 80px;
+    text-align: center;
+    position: relative;
+  }
+  .hero-badge {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 8px 22px;
+    border-radius: 30px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 4px;
+    margin-bottom: 28px;
+    background: rgba(255,215,0,0.05);
+    box-shadow: 0 0 25px rgba(255,215,0,0.3), inset 0 0 15px rgba(255,215,0,0.1);
+    animation: badgeGlow 2s ease-in-out infinite alternate;
+  }
+  @keyframes badgeGlow {
+    from { box-shadow: 0 0 15px rgba(255,215,0,0.2); }
+    to { box-shadow: 0 0 35px rgba(255,45,149,0.6); }
+  }
+
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: clamp(44px, 8vw, 96px);
+    line-height: 1;
+    background: linear-gradient(180deg, #fffbe6 0%, var(--gold) 45%, var(--gold-dark) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 60px rgba(255,215,0,0.4);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+  }
+  .hero h1 .accent {
+    display: block;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.55em;
+    color: var(--neon-pink);
+    -webkit-text-fill-color: var(--neon-pink);
+    text-shadow: 0 0 30px var(--neon-pink), 0 0 60px var(--neon-pink);
+    letter-spacing: 12px;
+    margin-top: 10px;
+  }
+
+  .hero p {
+    font-size: 20px;
+    max-width: 680px;
+    margin: 0 auto 40px;
+    color: #cbb894;
+    font-style: italic;
+    line-height: 1.7;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #1a0d00;
+    border: none;
+    padding: 18px 42px;
+    border-radius: 50px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 30px rgba(255,215,0,0.5), inset 0 -4px 0 rgba(0,0,0,0.2);
+    font-weight: 700;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 0 55px rgba(255,215,0,0.9), inset 0 -4px 0 rgba(0,0,0,0.2);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--cream);
+    border: 2px solid var(--neon-cyan);
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 0 20px rgba(0,240,255,0.3);
+  }
+  .btn-ghost:hover {
+    background: rgba(0,240,255,0.1);
+    box-shadow: 0 0 40px rgba(0,240,255,0.7);
+    transform: translateY(-3px);
+  }
+
+  /* STATS */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    padding: 50px 0;
+    border-top: 1px solid rgba(255,215,0,0.2);
+    border-bottom: 1px solid rgba(255,215,0,0.2);
+    margin-top: 60px;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-num {
+    font-family: 'Cinzel', serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 20px rgba(255,215,0,0.6);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: #998a6a;
+    margin-top: 8px;
+  }
+
+  /* SECTION TITLES */
+  .section {
+    padding: 90px 0;
+    position: relative;
+  }
+  .section-title {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  .section-title .eyebrow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 6px;
+    color: var(--neon-pink);
+    text-shadow: 0 0 15px var(--neon-pink);
+  }
+  .section-title h2 {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: clamp(32px, 5vw, 56px);
+    color: var(--cream);
+    margin-top: 10px;
+    text-shadow: 0 0 30px rgba(255,215,0,0.3);
+  }
+  .section-title .divider {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto 0;
+    box-shadow: 0 0 15px var(--gold);
+  }
+
+  /* ART CARDS (slot style) */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+  }
+
+  .art-card {
+    position: relative;
+    background: linear-gradient(180deg, rgba(30,10,10,0.9), rgba(15,5,5,0.95));
+    border: 2px solid var(--gold-dark);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.4s;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7), inset 0 0 30px rgba(255,45,149,0.05);
+    cursor: pointer;
+  }
+  .art-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255,215,0,0.15) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+    z-index: 3;
+    pointer-events: none;
+  }
+  .art-card:hover::before { transform: translateX(100%); }
+  .art-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--gold);
+    box-shadow: 0 20px 60px rgba(255,45,149,0.4), 0 0 40px rgba(255,215,0,0.3);
+  }
+
+  .art-img {
+    height: 240px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2a0a1a, #0a0a2a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .art-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+  }
+  .art-img .emoji {
+    font-size: 100px;
+    filter: drop-shadow(0 0 25px var(--neon-pink));
+    transition: transform 0.5s;
+  }
+  .art-card:hover .art-img .emoji { transform: scale(1.15) rotate(-5deg); }
+
+  .art-tag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--gold);
+    box-shadow: 0 0 15px rgba(200,16,46,0.8);
+    z-index: 2;
+  }
+
+  .art-info {
+    padding: 22px;
+  }
+  .art-title {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    color: var(--cream);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .art-artist {
+    font-size: 15px;
+    color: #a08f6d;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+  .art-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(255,215,0,0.25);
+  }
+  .art-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--gold);
+    text-shadow: 0 0 15px rgba(255,215,0,0.6);
+    letter-spacing: 1px;
+  }
+  .art-bid {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    color: var(--neon-cyan);
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  /* BAR MENU */
+  .bar {
+    background: linear-gradient(180deg, rgba(20,5,5,0.6), rgba(40,10,10,0.4));
+    border-top: 3px double var(--gold-dark);
+    border-bottom: 3px double var(--gold-dark);
+    position: relative;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .menu-item {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 12px;
+    transition: all 0.3s;
+  }
+  .menu-item:hover {
+    border-color: var(--gold);
+    background: rgba(255,215,0,0.05);
+    transform: translateX(6px);
+  }
+  .menu-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 10px var(--gold));
+  }
+  .menu-text h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .menu-text p {
+    font-size: 14px;
+    color: #a08f6d;
+    font-style: italic;
+    margin-bottom: 6px;
+  }
+  .menu-text .price {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--neon-pink);
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px var(--neon-pink);
+  }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    padding: 100px 0;
+    background:
+      radial-gradient(ellipse at center, rgba(200,16,46,0.25), transparent 70%),
+      radial-gradient(ellipse at center, rgba(255,45,149,0.15), transparent 60%);
+    border-top: 2px solid var(--gold-dark);
+    border-bottom: 2px solid var(--gold-dark);
+    position: relative;
+  }
+  .cta h2 {
+    font-family: 'Cinzel', serif;
+    font-weight: 900;
+    font-size: clamp(36px, 6vw, 72px);
+    color: var(--gold);
+    text-shadow: 0 0 40px rgba(255,215,0,0.6);
+    margin-bottom: 20px;
+  }
+  .cta p {
+    font-size: 20px;
+    color: #cbb894;
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+
+  /* FOOTER */
+  footer {
+    background: #050202;
+    padding: 50px 0 30px;
+    border-top: 1px solid rgba(255,215,0,0.2);
+    text-align: center;
+  }
+  footer .logo { justify-content: center; font-size: 22px; margin-bottom: 20px; }
+  .footer-links {
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .footer-links a {
+    color: #a08f6d;
+    text-decoration: none;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 2px;
+    font-size: 15px;
+    transition: color 0.3s;
+  }
+  .footer-links a:hover { color: var(--gold); }
+  .copyright {
+    color: #5a4a2a;
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .slot-machine:nth-child(n+3) { display: none; }
+    .hero { padding: 60px 0 40px; }
+    .stats { gap: 30px; }
+    .stat-num { font-size: 32px; }
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #0a0505; }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--gold), var(--red));
+    border-radius: 5px;
+  }
+</style>
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div class="bg-floor"></div>
+
+<!-- SLOT MACHINES -->
+<div class="slots-layer">
+  <div class="slot-machine">
+    <div class="slot-body">
+      <div class="slot-top-light"></div>
+      <div class="slot-screen">
+        <div class="reel"></div>
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+      <div class="slot-lever"></div>
+      <div class="slot-bottom">JACKPOT</div>
+    </div>
+  </div>
+  <div class="slot-machine">
+    <div class="slot-body">
+      <div class="slot-top-light"></div>
+      <div class="slot-screen">
+        <div class="reel"></div>
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+      <div class="slot-lever"></div>
+      <div class="slot-bottom">LUCKY</div>
+    </div>
+  </div>
+  <div class="slot-machine">
+    <div class="slot-body">
+      <div class="slot-top-light"></div>
+      <div class="slot-screen">
+        <div class="reel"></div>
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+      <div class="slot-lever"></div>
+      <div class="slot-bottom">777</div>
+    </div>
+  </div>
+  <div class="slot-machine">
+    <div class="slot-body">
+      <div class="slot-top-light"></div>
+      <div class="slot-screen">
+        <div class="reel"></div>
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+      <div class="slot-lever"></div>
+      <div class="slot-bottom">BAR</div>
+    </div>
+  </div>
+  <div class="slot-machine">
+    <div class="slot-body">
+      <div class="slot-top-light"></div>
+      <div class="slot-screen">
+        <div class="reel"></div>
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+      <div class="slot-lever"></div>
+      <div class="slot-bottom">ART</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="container nav-inner">
+    <div class="logo"><span class="dice-icon">🎲</span> LUCKY BRUSH</div>
+    <ul class="nav-links">
+      <li><a href="#gallery">Галерея</a></li>
+      <li><a href="#auction">Аукцион</a></li>
+      <li><a href="#bar">Бар</a></li>
+      <li><a href="#artists">Художники</a></li>
+    </ul>
+    <button class="nav-cta">ВОЙТИ В ИГРУ</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="container hero">
+  <div class="hero-badge">◆ ОТКРЫТО 24/7 ◆ СТАВКИ ПРИНИМАЮТСЯ ◆</div>
+  <h1>
+    LUCKY BRUSH
+    <span class="accent">ART · CASINO · BAR</span>
+  </h1>
+  <p>Рынок, где искусство встречает азарт. Покупай, делай ставки и выигрывай шедевры у лучших художников современности — прямо за барной стойкой.</p>
+  <div class="hero-buttons">
+    <button class="btn-primary">🎰 КРУТИТЬ БАРАБАН</button>
+    <button class="btn-ghost">СМОТРЕТЬ ЛОТЫ</button>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">12,847</div>
+      <div class="stat-label">РАБОТ В ИГРЕ</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">$4.2M</div>
+      <div class="stat-label">ОБОРОТ ЗА МЕСЯЦ</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">3,209</div>
+      <div class="stat-label">ХУДОЖНИКОВ</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">98%</div>
+      <div class="stat-label">ДЖЕКПОТОВ</div>
+    </div>
+  </div>
+</header>
+
+<!-- GALLERY -->
+<section class="section container" id="gallery">
+  <div class="section-title">
+    <div class="eyebrow">◆ СТОЛЫ С ТВОРЧЕСТВОМ ◆</div>
+    <h2>ГАЛЕРЕЯ УДАЧИ</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="grid">
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">🔥 ХИТ</div>
+        <div class="emoji">🎨</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Красная дама</div>
+        <div class="art-artist">Мария Ковалёва · масло, холст</div>
+        <div class="art-meta">
+          <div class="art-price">$2,400</div>
+          <div class="art-bid">18 ставок</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">◆ НОВОЕ</div>
+        <div class="emoji">🃏</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Джокер в ночи</div>
+        <div class="art-artist">Иван Петров · цифра, 4K</div>
+        <div class="art-meta">
+          <div class="art-price">$1,150</div>
+          <div class="art-bid">7 ставок</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">💎 ЛЮКС</div>
+        <div class="emoji">💎</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Бриллиантовый сон</div>
+        <div class="art-artist">Анна Соколова · акрил</div>
+        <div class="art-meta">
+          <div class="art-price">$5,800</div>
+          <div class="art-bid">32 ставки</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">🎰 ДЖЕКПОТ</div>
+        <div class="emoji">🎰</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Три семёрки</div>
+        <div class="art-artist">Дмитрий Орлов · неон</div>
+        <div class="art-meta">
+          <div class="art-price">$7,777</div>
+          <div class="art-bid">77 ставок</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">🌙 АТМОСФЕРА</div>
+        <div class="emoji">🌃</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Ночной город</div>
+        <div class="art-artist">Ольга Миронова · масло</div>
+        <div class="art-meta">
+          <div class="art-price">$3,200</div>
+          <div class="art-bid">21 ставка</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">🔥 РЕДКОЕ</div>
+        <div class="emoji">🦅</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Золотой орёл</div>
+        <div class="art-artist">Сергей Волков · тушь, золото</div>
+        <div class="art-meta">
+          <div class="art-price">$4,650</div>
+          <div class="art-bid">14 ставок</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BAR -->
+<section class="section bar" id="bar">
+  <div class="container">
+    <div class="section-title">
+      <div class="eyebrow">◆ НАПИТКИ И ВДОХНОВЕНИЕ ◆</div>
+      <h2>БАР LUCKY BRUSH</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div class="menu-grid">
+      <div class="menu-item">
+        <div class="menu-icon">🥃</div>
+        <div class="menu-text">
+          <h4>Холст на скалах</h4>
+          <p>Виски, дым и немного терпения художника</p>
+          <span class="price">$18</span>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">🍸</div>
+        <div class="menu-text">
+          <h4>Розовый фламинго</h4>
+          <p>Джин, малина, лайм и щепотка гламура</p>
+          <span class="price">$22</span>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">🍷</div>
+        <div class="menu-text">
+          <h4>Красное по-мастерски</h4>
+          <p>Авторское вино из погреба галереи</p>
+          <span class="price">$26</span>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">🍾</div>
+        <div class="menu-text">
+          <h4>Джекпот-шампанское</h4>
+          <p>Открывается только при ставке выше $1000</p>
+          <span class="price">$150</span>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">☕</div>
+        <div class="menu-text">
+          <h4>Чёрный квадрат</h4>
+          <p>Эспрессо с углём и каплей загадки</p>
+          <span class="price">$9</span>
+        </div>
+      </div>
+      <div class="menu-item">
+        <div class="menu-icon">🍹</div>
+        <div class="menu-text">
+          <h4>Неоновый закат</h4>
+          <p>Текила, апельсин, лайм и синий кюрасао</p>
+          <span class="price">$24</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="auction">
+  <div class="container">
+    <div class="eyebrow" style="font-family:'Bebas Neue';letter-spacing:6px;color:var(--neon-pink);text-shadow:0 0 15px var(--neon-pink);margin-bottom:15px;">◆ СДЕЛАЙ СТАВКУ ◆</div>
+    <h2>ВЫИГРАЙ ШЕДЕВР</h2>
+    <p>Каждый лот — как барабан игрового автомата. Крути, ставь, побеждай.</p>
+    <button class="btn-primary" style="font-size:22px;padding:22px 55px;">🎰 НАЧАТЬ АУКЦИОН</button>
+  </div>
+</section>
+
+<!-- ARTISTS -->
+<section class="section container" id="artists">
+  <div class="section-title">
+    <div class="eyebrow">◆ ЛЕГЕНДЫ СТОЛА ◆</div>
+    <h2>ЛУЧШИЕ ХУДОЖНИКИ</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="grid">
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">👑 ТОП</div>
+        <div class="emoji">👩‍🎨</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Мария Ковалёва</div>
+        <div class="art-artist">142 работы · 4.9★ · Москва</div>
+        <div class="art-meta">
+          <div class="art-price">$48K</div>
+          <div class="art-bid">продано</div>
+        </div>
+      </div>
+    </div>
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">🎯 СТАБИЛЬНО</div>
+        <div class="emoji">🧑‍🎨</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Иван Петров</div>
+        <div class="art-artist">98 работ · 4.8★ · Санкт-Петербург</div>
+        <div class="art-meta">
+          <div class="art-price">$31K</div>
+          <div class="art-bid">продано</div>
+        </div>
+      </div>
+    </div>
+    <div class="art-card">
+      <div class="art-img">
+        <div class="art-tag">✨ НОВАЯ ЗВЕЗДА</div>
+        <div class="emoji">👨‍🎨</div>
+      </div>
+      <div class="art-info">
+        <div class="art-title">Дмитрий Орлов</div>
+        <div class="art-artist">76 работ · 4.9★ · Казань</div>
+        <div class="art-meta">
+          <div class="art-price">$27K</div>
+          <div class="art-bid">продано</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="logo"><span class="dice-icon">🎲</span> LUCKY BRUSH</div>
+    <div class="footer-links">
+      <a href="#gallery">Галерея</a>
+      <a href="#auction">Аукцион</a>
+      <a href="#bar">Бар</a>
+      <a href="#artists">Художники</a>
+      <a href="#">Контакты</a>
+    </div>
+    <div class="copyright">© 2025 LUCKY BRUSH · ИСКУССТВО · АЗАРТ · ВДОХНОВЕНИЕ</div>
+  </div>
+</footer>
+
+<script>
+  // Floating chips
+  const chipColors = ['red', 'blue', 'gold', 'black'];
+  for (let i = 0; i < 14; i++) {
+    const chip = document.createElement('div');
+    chip.className = 'chip ' + chipColors[Math.floor(Math.random() * chipColors.length)];
+    chip.style.left = Math.random() * 100 + 'vw';
+    chip.style.animationDuration = (8 + Math.random() * 10) + 's';
+    chip.style.animationDelay = (-Math.random() * 15) + 's';
+    document.body.appendChild(chip);
+  }
+
+  // Floating dice
+  const diceFaces = ['🎲', '🎲', '🎲', '🃏', '♠', '♥', '♦', '♣'];
+  for (let i = 0; i < 8; i++) {
+    const dice = document.createElement('div');
+    dice.className = 'dice';
+    dice.textContent = diceFaces[Math.floor(Math.random() * diceFaces.length)];
+    dice.style.left = Math.random() * 100 + 'vw';
+    dice.style.animationDuration = (12 + Math.random() * 12) + 's';
+    dice.style.animationDelay = (-Math.random() * 20) + 's';
+    document.body.appendChild(dice);
+  }
+
+  // Parallax on slot machines
+  document.addEventListener('mousemove', (e) => {
+    const x = (e.clientX / window.innerWidth - 0.5) * 20;
+    const y = (e.clientY / window.innerHeight - 0.5) * 20;
+    document.querySelectorAll('.slot-machine').forEach((s, i) => {
+      s.style.transform = `translate(${x * (i % 2 ? -1 : 1)}px, ${y * 0.5}px) scale(${s.style.transform.match(/scale\(([\d.]+)\)/) ? '' : ''})`;
+    });
+  });
+
+  // Card click effect
+  document.querySelectorAll('.art-card, .menu-item').forEach(card => {
+    card.addEventListener('click', () => {
+      card.style.transform = 'scale(0.97)';
+      setTimeout(() => card.style.transform = '', 150);
+    });
+  });
+
+  // Smooth scroll for nav links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
